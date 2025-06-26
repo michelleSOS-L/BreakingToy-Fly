@@ -13,7 +13,6 @@ export default function SearchForm() {
   const [adults, setAdults] = useState(1);
   const [currency, setCurrency] = useState('USD');
   const [nonStop, setNonStop] = useState(false);
-  const [sortBy, setSortBy] = useState('price');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +58,7 @@ export default function SearchForm() {
       adults: adults.toString(),
       currency,
       nonStop: nonStop.toString(),
-      sortBy,
+     
     });
 
     try {
@@ -136,11 +135,7 @@ export default function SearchForm() {
       </label>
 
       <label>
-        Sort By:
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="price">Price</option>
-          <option value="duration">Duration</option>
-        </select>
+        
       </label>
 
       <button type="submit">Search Flights</button>
