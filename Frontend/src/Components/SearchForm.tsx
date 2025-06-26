@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AutocompleteInput from '../Components/AutoCompleteInput';
+import AutocompleteInput from './AutoCompleteInput';
+import { fetchAPI } from '../api/flightService';
 
 export default function SearchForm() {
   const navigate = useNavigate();
@@ -12,43 +13,79 @@ export default function SearchForm() {
   const [adults, setAdults] = useState(1);
   const [currency, setCurrency] = useState('USD');
   const [nonStop, setNonStop] = useState(false);
+  const [sortBy, setSortBy] = useState('price');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const query = new URLSearchParams({
-      origin: departure,
-      destination: arrival,
-      date: departureDate,
+    const today = new Date().toISOString().split('T')[0]; // format: yyyy-mm-dd
+
+    if (!departure || !arrival) {
+      alert('Please select both departure and arrival airports.');
+      return;
+    }
+
+    if (!departureDate) {
+      alert('Please choose a departure date.');
+      return;
+    }
+
+    if (departureDate < today) {
+      alert('Departure date cannot be in the past.');
+      return;
+    }
+
+    if (returnDate) {
+      if (returnDate === departureDate) {
+        alert('Departure and return dates cannot be the same.');
+        return;
+      }
+      if (returnDate < departureDate) {
+        alert('Return date cannot be before departure date.');
+        return;
+      }
+    }
+
+    if (adults < 1) {
+      alert('Number of adults must be at least 1.');
+      return;
+    }
+
+    const queryParams = new URLSearchParams({
+      originLocationCode: departure,
+      destinationLocationCode: arrival,
+      departureDate,
+      returnDate,
       adults: adults.toString(),
       currency,
       nonStop: nonStop.toString(),
-    }).toString();
+      sortBy,
+    });
 
     try {
-      const response = await fetch(`http://localhost:9090/api/airports/flights?${query}`);
-      if (!response.ok) throw new Error('Error fetching flights');
-
-      const data = await response.json();
-      navigate('/results', { state: { flights: data } });
+      const data = await fetchAPI(`/api/flights/search?${queryParams.toString()}`);
+      navigate('/results', {
+        state: { query: queryParams.toString() }
+      });
     } catch (error) {
-      console.error('Failed to fetch flights:', error);
+      console.error(' Error fetching flights:', error);
       alert('Something went wrong fetching flights.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-  Departure Airport:
-  <input value={departure} onChange={(e) => setDeparture(e.target.value)} required />
-</label>
+    <form className="search-form" onSubmit={handleSubmit}>
+      <AutocompleteInput
+        label="Departure Airport:"
+        value={departure}
+        onChange={(code, fullName) => setDeparture(code)}
+      />
 
-<label>
-  Arrival Airport:
-  <input value={arrival} onChange={(e) => setArrival(e.target.value)} required />
-</label>
-
+      <AutocompleteInput
+        label="Arrival Airport:"
+        value={arrival}
+        onChange={(code, fullName) => setArrival(code)}
+      />
 
       <label>
         Departure Date:
@@ -70,7 +107,7 @@ export default function SearchForm() {
       </label>
 
       <label>
-        Number of Adults:
+        Adults:
         <input
           type="number"
           value={adults}
@@ -96,6 +133,14 @@ export default function SearchForm() {
           onChange={(e) => setNonStop(e.target.checked)}
         />
         Non-stop only
+      </label>
+
+      <label>
+        Sort By:
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="price">Price</option>
+          <option value="duration">Duration</option>
+        </select>
       </label>
 
       <button type="submit">Search Flights</button>

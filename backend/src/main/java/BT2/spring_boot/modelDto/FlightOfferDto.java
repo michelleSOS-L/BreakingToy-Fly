@@ -1,22 +1,25 @@
 package BT2.spring_boot.modelDto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class FlightOfferDto {
-    private String id;
-    private String source;
-    private boolean oneWay;
-    private int numberOfBookableSeats;
-    private PriceDto price;
-    private List<ItineraryDto> itineraries;
-    private List<TravelerPricingDto> travelerPricing;
-
+    private String airlineName;
+    private String airlineCode;
+    private String departureTime;
+    private String arrivalTime;
+    private String originAirport;
+    private String destinationAirport;
+    private String duration;
+    private String totalPrice;
+    private double pricePerAdult;
 }

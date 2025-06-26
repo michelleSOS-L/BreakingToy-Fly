@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import SearchPage from './Pages/SearchPage';
 import ResultsPage from './Pages/ResultsPage';
 import DetailsPage from './Pages/DetailsPage';
+import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

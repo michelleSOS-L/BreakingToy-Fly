@@ -1,21 +1,32 @@
 package BT2.spring_boot.controller;
 
-import BT2.spring_boot.service.SearchService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import BT2.spring_boot.modelDto.AirlineDTO;
+import BT2.spring_boot.service.AirlineService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/airlines")
 public class AirlineController {
-    private final SearchService searchService;
-    public AirlineController(SearchService searchService) {
-        this.searchService = searchService;
+
+    private final AirlineService airlineService;
+
+    public AirlineController(AirlineService airlineService) {
+        this.airlineService = airlineService;
     }
-    @GetMapping
-    public String getAirlines(@RequestParam String code) {
-        return searchService.getAirlineInfo(code);
+
+    @GetMapping("/{code}")
+    public ResponseEntity<AirlineDTO> getAirlineInfo(@PathVariable String code) {
+        try {
+            AirlineDTO result = airlineService.getAirlineInfo(code);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

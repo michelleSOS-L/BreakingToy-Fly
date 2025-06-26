@@ -1,6 +1,5 @@
 package BT2.spring_boot.modelDto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AirportSearchResponse {
-    private List<AirportDto> airports;
+public class AirlineDTO {
+    private String code;
+    private String name;
 }

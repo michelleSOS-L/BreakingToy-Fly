@@ -1,15 +1,19 @@
 package BT2.spring_boot.modelDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-@Getter
+
+import java.util.List;
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AirlineDto {
-    private String iataCode;
-    private String icaoName;
-    private String businessName;
-    private String commonName;
+public class FlightOfferResponseWrapper {
+
+    private List<FlightOfferResponse> data;
+
+
+
 }

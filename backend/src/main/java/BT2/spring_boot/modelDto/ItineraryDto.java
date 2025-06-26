@@ -1,16 +1,15 @@
 package BT2.spring_boot.modelDto;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+@Data
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ItineraryDto {
     private String duration;
-    private List<FlightSegmentDto> segments;
+    private List<SegmentDto> segments;
+
 }

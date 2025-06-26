@@ -1,7 +1,11 @@
 package BT2.spring_boot.controller;
 
-import BT2.spring_boot.modelDto.FlightCardDto;
-import BT2.spring_boot.service.SearchService;
+import BT2.spring_boot.modelDto.AirportDtop;
+
+import BT2.spring_boot.service.AirportService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,25 +14,20 @@ import java.util.List;
 @RequestMapping("/api/airports")
 public class AirportController {
 
-    private final SearchService airportService;
+    private final AirportService airportService;
 
-    public AirportController(SearchService airportService) {
+    public AirportController(AirportService airportService) {
         this.airportService = airportService;
     }
 
-    @GetMapping
-    public String getAirports(@RequestParam String keyword) {
-        return airportService.searchAirports(keyword);
-    }
-    @GetMapping("/flights")
-    public List<FlightCardDto> getFlights(
-            @RequestParam String origin,
-            @RequestParam String destination,
-            @RequestParam String date,
-            @RequestParam int adults,
-            @RequestParam String currency,
-            @RequestParam boolean nonStop
-    ) {
-        return airportService.searchFlightsSimplified(origin, destination, date, adults, currency, nonStop);
+    @GetMapping("/search")
+    public ResponseEntity<List<AirportDtop>> searchAirports(@RequestParam String keyword) {
+        try {
+            List<AirportDtop> result = airportService.searchAirports(keyword);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
+

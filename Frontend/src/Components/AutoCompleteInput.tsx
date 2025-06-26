@@ -1,84 +1,47 @@
-import { useEffect, useState } from 'react';
+import AsyncSelect from 'react-select/async';
 
 interface Option {
-  name: string;
-  iataCode: string;
-}
-
-interface Props {
   label: string;
   value: string;
-  onChange: (code: string) => void;
+}
+
+interface Props { 
+  label: string;
+  value: string;
+  onChange: (code: string, name: string) => void;
 }
 
 export default function AutocompleteInput({ label, value, onChange }: Props) {
-  const [suggestions, setSuggestions] = useState<Option[]>([]);
-  const [query, setQuery] = useState(value);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const loadOptions = async (inputValue: string): Promise<Option[]> => {
+    if (!inputValue || inputValue.length < 2) return [];
 
-  useEffect(() => {
-    if (query.length < 2) return;
+    try {
+      const res = await fetch(`http://localhost:9090/api/airports/search?keyword=${inputValue}`);
+      const data = await res.json();
 
-    const timeout = setTimeout(() => {
-      fetch(`http://localhost:9090/api/airports?keyword=${query}`)
-        .then((res) => res.json())
-        .then((data) => {
-          const results = data.data.map((loc: any) => ({
-            name: loc.detailedName,
-            iataCode: loc.iataCode,
-          }));
-          setSuggestions(results);
-          setShowDropdown(true);
-        })
-        .catch((err) => {
-          console.error('Failed to fetch suggestions:', err);
-        });
-    }, 300); // debounce input
-
-    return () => clearTimeout(timeout);
-  }, [query]);
-
-  const handleSelect = (option: Option) => {
-    onChange(option.iataCode);
-    setQuery(option.name); 
-    setShowDropdown(false);
+      return data.map((loc: any) => ({
+        label: `${loc.fullName} (${loc.iataCode})`,
+        value: loc.iataCode,
+      }));
+    } catch (err) {
+      console.error('Failed to fetch suggestions:', err);
+      return [];
+    }
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      <label>{label}</label>
-      <input
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setShowDropdown(true);
+    <div style={{ marginBottom: '1rem' }}>
+      <label style={{ display: 'block', marginBottom: '0.5rem' }}>{label}</label>
+      <AsyncSelect
+        cacheOptions
+        defaultOptions
+        loadOptions={loadOptions}
+        placeholder="Airport..."
+        onChange={(selected) => {
+          if (selected) onChange(selected.value, selected.label);
         }}
-        required
+        value={value ? { label: value, value } : null}
       />
-      {showDropdown && suggestions.length > 0 && (
-        <ul
-          style={{
-            position: 'absolute',
-            background: 'white',
-            listStyle: 'none',
-            padding: '0',
-            margin: '0',
-            border: '1px solid #ccc',
-            width: '100%',
-            zIndex: 10,
-          }}
-        >
-          {suggestions.map((option) => (
-            <li
-              key={option.iataCode}
-              onClick={() => handleSelect(option)}
-              style={{ padding: '5px', cursor: 'pointer' }}
-            >
-              {option.name} ({option.iataCode})
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }

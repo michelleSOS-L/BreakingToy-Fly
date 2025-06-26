@@ -1,17 +1,16 @@
 package BT2.spring_boot.modelDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AirportDto {
-    private String iataCode;
+public class AmenityDTO {
     private String name;
-    private String detailedName;
-    private String country;
-    private String city;
-    private String subType;
+    private boolean chargeable;
+
 }
