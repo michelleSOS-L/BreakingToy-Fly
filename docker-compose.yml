@@ -7,6 +7,6 @@ services:
       - "9090:9090"         
   frontend:
     build:
-      context: ./frontend
+      context: ./Frontend
     ports:
       - "8080:8080"        
