@@ -33,7 +33,7 @@ export default function FlightCard({ flight }: FlightCardProps) {
         <p className="flight-duration">
           {flight.duration} {flight.stops ? `(${flight.stops} stop${flight.stops > 1 ? 's' : ''})` : '(Nonstop)'}
         </p>
-        {flight.layovers?.length > 0 && (
+        {Array.isArray(flight.layovers) && flight.layovers.length > 0 && (
           <p className="flight-layover">{flight.layovers.join(' • ')}</p>
         )}
         <p className="flight-airline">{flight.airlineName} ({flight.airlineCode})</p>

@@ -17,7 +17,7 @@ export default function SearchForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const today = new Date().toISOString().split('T')[0]; // format: yyyy-mm-dd
+    const today = new Date().toISOString().split('T')[0];
 
     if (!departure || !arrival) {
       alert('Please select both departure and arrival airports.');
@@ -58,11 +58,10 @@ export default function SearchForm() {
       adults: adults.toString(),
       currency,
       nonStop: nonStop.toString(),
-     
     });
 
     try {
-      const data = await fetchAPI(`/api/flights/search?${queryParams.toString()}`);
+       await fetchAPI(`/api/flights/search?${queryParams.toString()}`);
       navigate('/results', {
         state: { query: queryParams.toString() }
       });
@@ -77,13 +76,13 @@ export default function SearchForm() {
       <AutocompleteInput
         label="Departure Airport:"
         value={departure}
-        onChange={(code, fullName) => setDeparture(code)}
+        onChange={(code) => setDeparture(code)}
       />
 
       <AutocompleteInput
         label="Arrival Airport:"
         value={arrival}
-        onChange={(code, fullName) => setArrival(code)}
+        onChange={(code) => setArrival(code)}
       />
 
       <label>
@@ -134,11 +133,11 @@ export default function SearchForm() {
         Non-stop only
       </label>
 
-      <label>
-        
-      </label>
-
       <button type="submit">Search Flights</button>
     </form>
   );
 }
+
+
+
+
